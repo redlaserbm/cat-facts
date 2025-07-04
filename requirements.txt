@@ -1,2 +1,4 @@
 requests
-fastapi
+fastapi[standard]
+uvicorn
+pydantic

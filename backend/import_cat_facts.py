@@ -17,7 +17,7 @@ def fetch_cat_facts(connection):
                 INSERT OR IGNORE INTO cat_facts (fact) VALUES (?)
                 ''', (fact,))
             
-            if cursor.rowcount == 1:
+            if cursor.rowcount > 0:
                 print(f"Inserted: {fact}")
             else:
                 print(f"Ignored (duplicate): {fact}")

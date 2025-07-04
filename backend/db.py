@@ -1,5 +1,5 @@
 import sqlite3 as sq3
-from backend.import_cat_facts import fetch_cat_facts
+from import_cat_facts import fetch_cat_facts
 
 DB_PATH = "cat_facts.db"
 
