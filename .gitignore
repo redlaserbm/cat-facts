@@ -8,8 +8,6 @@ frontend/dist/
 __pycache__/
 *.py[cod]
 *.sqlite3
-*.db
-*.db-journal
 *.log
 *.pkl
 *.pyc
