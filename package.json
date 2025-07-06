@@ -15,7 +15,8 @@
     "start:frontend": "serve -s frontend/dist",
     "start:backend": "cd backend && uvicorn main:app --host 0.0.0.0 --port 8000",
     "start": "npm run build:frontend && concurrently \"npm run start:frontend\" \"npm run start:backend\"",
-    "render-build": "npm i && npm run build"
+    "render-build": "npm i && npm run build",
+    "render-start": "concurrently \"npm run start:frontend\" \"npm run start:backend\""
   },
   "keywords": [],
   "author": "",
