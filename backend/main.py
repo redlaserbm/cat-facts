@@ -5,11 +5,21 @@ from fastapi.middleware.cors import CORSMiddleware
 from db import get_connection
 from pydantic import BaseModel
 
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+frontend_url = os.getenv('FRONTEND_URL')
+
 app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # You can limit this to http://localhost:3000 if preferred
+    allow_origins=[
+        "http://localhost:5173",  # Vite dev
+        frontend_url,  # Production URL
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
