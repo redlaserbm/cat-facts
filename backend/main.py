@@ -11,6 +11,7 @@ import os
 load_dotenv()
 
 frontend_url = os.getenv('FRONTEND_URL')
+print(f"FRONTEND_URL: {frontend_url}")
 
 app = FastAPI()
 
@@ -18,6 +19,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:5173",  # Vite dev
+        "http://localhost:3000", # Local production URL
         frontend_url,  # Production URL
     ],
     allow_credentials=True,
