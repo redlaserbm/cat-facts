@@ -20,6 +20,7 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:5173",  # Vite dev
         "http://localhost:3000", # Local production URL
+        "https://cat-facts-frontend.onrender.com",
         frontend_url,  # Production URL
     ],
     allow_credentials=True,
