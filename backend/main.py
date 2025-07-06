@@ -38,8 +38,6 @@ def get_cat_facts(page: int = 1, limit: int = 5):
         rows = cursor.fetchall()
 
     facts = [dict(row) for row in rows]
-
-    print("Obtained cat facts:")
     print(facts)
     return facts
 
@@ -67,18 +65,33 @@ def get_random_cat_fact():
 def post_cat_fact(cat_fact: CatFact):
     with get_connection() as conn:
         cursor = conn.cursor()
-        cursor.execute("INSERT OR IGNORE INTO cat_facts (fact) VALUES (?)", (cat_fact.fact,))
 
-        if cursor.rowcount > 0:
-            print(f"Inserted: {cat_fact.fact}")
-        else:
-            if len(cat_fact.fact) > 0:
-                print(f"Ignored (duplicate): {cat_fact.fact}")
-                return {"message": "Duplicate fact, not added"}
+        if len(cat_fact.fact) > 0:
+            cursor.execute("INSERT OR IGNORE INTO cat_facts (fact) VALUES (?)", (cat_fact.fact,))
+            if cursor.rowcount > 0:
+                print(f"Inserted: {cat_fact.fact}")
             else:
-                print("Ignored (empty fact)")
-                return {"message": "Empty fact, not added"}
-
+                print(f"Ignored (duplicate fact): {cat_fact.fact}")
+                return {"message": "Fact already exists, not added"}
+        else:
+            print("Ignored (empty fact)")
+            return {"message": "Empty fact, not added"}
+        
         conn.commit()
 
     return {"message": "Cat fact added successfully"}
+
+# DELETE a cat fact by ID
+@app.delete('/catfacts/{fact_id}')
+def delete_cat_fact(fact_id: int):
+    with get_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM cat_facts WHERE id = ?", (fact_id,))
+        if cursor.rowcount > 0:
+            print(f"Deleted cat fact with ID: {fact_id}")
+            conn.commit()
+            return {"message": "Cat fact deleted successfully"}
+        else:
+            print(f"Cat fact with ID {fact_id} not found")
+            conn.commit()
+            return {"message": "Cat fact not found"}

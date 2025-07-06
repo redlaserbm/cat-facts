@@ -13,13 +13,57 @@ const FactsPage = () => {
     const [newFact, setNewFact] = useState<string>(''); // Concerns the fact the user is trying to add
     const [factsNumber, setFactsNumber] = useState<number>(0); // Total number of facts in the database
 
-    // Hardcoded constants
-    const factsLimit = 5; // Number of facts to display per page
+    // Determines how many facts to display per pag
+    const [factsLimit, setFactsLimit] = useState<number>(5); // Number of facts to display per page
 
-    // When the page first loads, fetch cat facts from our API
+    // This is where the API is hosted.
+    const serverPrefix = import.meta.env.VITE_API_URL || '';
+    console.log(`Server prefix is: ${serverPrefix}`);
+
     useEffect(() => {
+
+        console.log('Setting up resize event listener.');
+
+        const handleResize = () => {
+            // Reduce the facts limit if the viewport is short
+            if (window.innerHeight < 1000) {
+                setFactsLimit(1);
+            } else {
+                setFactsLimit(5);
+            }
+        };
+
+        handleResize(); 
+        window.addEventListener('resize', handleResize);
+
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    },[]);
+
+    // Whenever factsLimit changes, we should update factsPage to a reasonable value
+    useEffect(() =>{
+        if (factsLimit === 5) {
+            // The old factsLimit was 1
+            setFactsPage(Math.floor(factsPage / factsLimit) + 1);
+        } else {
+            // The old factsLimit was 5
+            setFactsPage(5 * (factsPage - 1) + 1);
+        }
+    },[factsLimit])
+
+    // In some cases when factsNumber changes, we need to step backwards a page
+    useEffect(() => {
+        if (factsLimit * (factsPage - 1) + 1 > factsNumber) {
+            setFactsPage(Math.max(factsPage - 1, 1));
+        }
+    }, [factsNumber]);
+
+    // Fetch cat facts from our API
+    useEffect(() => {
+        console.log(`Fetching facts for page ${factsPage} with limit ${factsLimit}.`);
         const fetchFacts = async () => {
-            const response = await fetch(`/catfacts?page=${factsPage}&limit=${factsLimit}`);
+            const response = await fetch(`${serverPrefix}/catfacts?page=${factsPage}&limit=${factsLimit}`);
             const data = await response.json();
             setFacts(data.map((fact: any) => {
                 return {
@@ -31,18 +75,23 @@ const FactsPage = () => {
         };
 
         const fetchFactsCount = async () => {
-            const response = await fetch('/catfacts/count');
+            const response = await fetch(`${serverPrefix}/catfacts/count`);
             const data = await response.json();
             setFactsNumber(data.count);
         };
         
         fetchFacts();
         fetchFactsCount();
-    }, [factsPage]);
+    }, [factsPage, factsLimit, factsNumber]);
 
     // When the user submits a new fact, add it to the database
-    const handleSubmit = async (_e: React.FormEvent) => {
-        const response = await fetch('/catfacts', {
+    const handleSubmit = async (e: React.FormEvent) => {
+        
+        e.preventDefault(); // Prevent the page from refreshing
+        setFactsNumber(factsNumber + 1); // Increment the number of facts in the database
+        setNewFact('');
+
+        const response = await fetch(`${serverPrefix}/catfacts`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -54,6 +103,19 @@ const FactsPage = () => {
         const message = (await response.json()).message;
         console.log(message);
     };
+
+    // When the user click the delete button corresponding to a fact, delete it from the database
+    const handleDelete = async (id: number) => {
+        const response = await fetch(`${serverPrefix}/catfacts/${id}`, {
+            method: 'DELETE'
+        });
+
+        setFactsNumber(factsNumber - 1); // Decrement the number of facts in the database
+
+        // The DELETE route will return a message indicating success or failure
+        const message = (await response.json()).message;
+        console.log(message);
+    }
 
     return (
         <div className="FactsPage-container">
@@ -69,8 +131,11 @@ const FactsPage = () => {
                         {facts.map((fact) => {
                             return (
                                 <li key={fact.id}>
-                                <p>{fact.fact}</p>
-                                <small>Added on: {fact.createdAt} </small>
+                                    <div className="fact-div">
+                                        <p>{fact.fact}</p>
+                                        <button onClick={() => handleDelete(fact.id)}>Delete</button>
+                                    </div>
+                                    <small className="fact-metadata">Added on: {fact.createdAt} </small>
                                 </li>
                             );
                         })}

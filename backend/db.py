@@ -20,7 +20,7 @@ def seed_db():
         CREATE TABLE IF NOT EXISTS cat_facts (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             fact TEXT NOT NULL UNIQUE,
-            created_at DATE DEFAULT (DATE('now'))
+            created_at DATE DEFAULT (DATETIME('now'))
         )
                     ''')
 
@@ -28,5 +28,3 @@ def seed_db():
         fetch_cat_facts(conn)
 
         conn.commit()
-
-seed_db()

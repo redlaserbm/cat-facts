@@ -1,46 +1,103 @@
-:root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/* CSS RESET */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
+html, body {
+  height: 100%;
+  font-family: 'Covered By Your Grace', Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.87);
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-synthesis: none;
+  color-scheme: light dark;
+}
+
+/* MEDIA ELEMENTS */
+img, picture, video, canvas, svg {
+  display: block;
+  max-width: 100%;
+}
+
+/* FORM ELEMENTS */
+input, button, textarea, select {
+  font: inherit;
+}
+
+/* FONT FACES */
+@font-face {
+  font-family: 'Covered By Your Grace';
+  src: url('./assets/fonts/CoveredByYourGrace-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Baby Doll';
+  src: url('./assets/fonts/BabyDoll.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* LINKS */
 a {
   font-weight: 500;
   color: #646cff;
   text-decoration: inherit;
 }
+
 a:hover {
   color: #535bf2;
 }
 
 body {
+  font-family: 'Baby Doll', Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   margin: 0;
   display: flex;
   place-items: top;
   min-width: 320px;
   min-height: 100vh;
+
+  background-image: url('./assets/images/cat_bg.png');
+  background-repeat: no-repeat;
+  background-size: auto 100vh;
+  background-position: left center; /* Always show the left side */
 }
 
+/* TEXT STYLES */
 h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+  font-size: 3.5em;
+  line-height: 2;
   text-align: center;
 }
+h2 { 
+  font-size: 2.5rem;
+  margin: 0;
+}
+h3 { font-size: 2.125rem; }
+h4 { font-size: 1.75rem; }
+h5 { font-size: 1.375rem; }
+h6 { font-size: 1.3125rem; }
+p  { 
+  font-family: 'Baby Doll', Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-size: 1.25rem; 
+  margin: 0.5rem;
+}
+
 
 button {
   border-radius: 8px;
   border: 1px solid transparent;
   padding: 0.6em 1.2em;
-  font-size: 1em;
+  font-size: 1.25em;
   font-weight: 500;
   font-family: inherit;
   background-color: #1a1a1a;
@@ -55,6 +112,20 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+input {
+  font-size: 1.5rem;
+}
+
+.FactsPage-background {
+  position: fixed;
+  z-index:-1;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  object-fit: cover; /* Ensures the image covers the entire viewport */
+}
+
 .FactsPage-container {
   margin-top: 1vh; /* 10% of the viewport height */
   width: 100vw;
@@ -62,17 +133,39 @@ button:focus-visible {
 
 .facts-display {
   position: relative; /* 10% of the viewport height */
-  left: 10vw;
   width: 80vw;
-  min-height: 25vh;
+  min-height: 20vh;
+  padding: 1rem;
+  background-color: rgba(0,0,0,0.8);
+  border: 0.3rem solid #ffffffd0;
+  border-radius: 1rem;
+
+  margin: 0 auto;
+  box-sizing: border-box; /* Includes padding and border in width calculation */
 }
 
 .facts-container {
-  min-height: 25vh;
-  max-height: 45vh;        /* Caps height at 50% of viewport */
+  min-height: 20vh;
+  max-height: 40vh;        /* Caps height at 50% of viewport */
   overflow-y: auto;        /* Enables vertical scrolling */
   padding-right: 1rem;     /* Optional: makes space for scrollbar */
   margin-bottom: 1.5rem;   /* Spacing from pagination or next element */
+}
+
+.fact-div {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.fact-metadata {
+  padding: 1rem;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.6);
 }
 
 .pagination-container {
@@ -92,7 +185,7 @@ button:focus-visible {
 .add-fact-form input {
   width: 50vw; /* or 100%, or any other fixed size */
   padding: 0.5rem;
-  font-size: 1rem;
+  font-size: 1.25rem;
 }
 
 .facts-header {
@@ -102,7 +195,14 @@ button:focus-visible {
 .add-fact-container {
   position: absolute;  
   bottom: 5vh; /* 10% of the viewport height */
-  width: 100vw;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60vw;
+  padding: 1rem;
+
+  background-color: rgba(0,0,0,0.8);
+  border: 0.3rem solid #ffffffd0;
+  border-radius: 1rem;
 }
 
 @media (prefers-color-scheme: light) {
