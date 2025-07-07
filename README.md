@@ -2,7 +2,7 @@
 
 ## Description
 
-This is a simple web application which displays cat facts. You can add new cat facts or delete existing cat facts from the website.
+This is a simple web application which displays cat facts. You can add new cat facts or delete existing cat facts from the website. The web application uses a `react.js` frontend, a `FASTapi` backend with Python, and `SQLite` as a database for storing the cat facts.
 
 ## Installation
 
